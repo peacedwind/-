@@ -191,6 +191,9 @@ public class Tank {
         }
     }
 
+
+
+
     public void moveByKey(KeyEvent keyEvent){
 
         int keyCode = keyEvent.getKeyCode();
@@ -244,21 +247,29 @@ public class Tank {
 
     //向左移动
     public void moveLeft(){
-        this.x -= speedX;
+        if (x != 0){
+            this.x -= speedX;
+        }
     }
 
     public void moveRight(){
-        this.x += speedX;
+        if (x < TankClient.GAME_WIDTH- TankClient.TANK_WIDTH){
+            this.x += speedX;
+        }
     }
 
     //向左移动
     public void moveUp(){
-        this.y -= speedY;
+        if (y > 30){
+            this.y -= speedY;
+        }
     }
 
     //向左移动
     public void moveDown(){
-        this.y += speedY;
+        if (y < TankClient.GAME_HEIGHT - TankClient.TANK_HEIGHT){
+            this.y += speedY;
+        }
     }
 
 

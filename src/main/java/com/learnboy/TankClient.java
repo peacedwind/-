@@ -42,7 +42,7 @@ public class TankClient extends Frame {
     @Override
     public void paint(Graphics g){
        // this.setTitle("炮弹数量为"+missiles.size());
-        g.drawString("炮弹数量为"+missiles.size(),50,50);
+        g.drawString("坦克的坐标为["+myTank.getX()+","+myTank.getY()+"]",50,50);
         missiles = missiles.stream().filter(e->e.isLiveAble()).collect(Collectors.toList());
         for (Missile missile : missiles) {
             missile.draw(g);
