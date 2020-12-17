@@ -231,7 +231,7 @@ public class Tank {
         }
         if (step % 3 == 0){
 
-            //this.shooting();
+            this.shooting();
         }
     }
 
