@@ -76,8 +76,8 @@ public class Snake {
             }else {
                 if (keyCode == KeyEvent.VK_S){
                     snakeClient.gameStop = false;
-                    return;
                 }
+                return;
             }
         }
 
