@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Tank
@@ -16,17 +17,33 @@ public class Tank {
     //坦克的位子
     private int x;
     private int y;
+    //等级
+    private int level = 1;
+    int step = 0;
+    private int frequency = random.nextInt(10)+1;
 
     private boolean bLeft = false, bUp = false,bRight = false,bDown = false;
 
     private TankClient tankClient;
 
     private Direction lastDir;
+    static Random random = new Random();
+
+    public void setLive(boolean live) {
+        this.live = live;
+    }
 
     //朝向
     private Direction toDir = Direction.D;
 
+    private boolean goodTank;
 
+    private boolean live = true;
+
+
+    public boolean isLive() {
+        return live;
+    }
 
     public void cancleByKey(KeyEvent e) {
         int keyCode = e.getKeyCode();
@@ -69,15 +86,16 @@ public class Tank {
 
     private int speedY = 5;
 
-    public Tank(int x,int y,TankClient tc){
-        this(x,y);
+    public Tank(int x,int y,TankClient tc,boolean goodTank){
+        this(x,y,goodTank);
         this.tankClient = tc;
     }
 
 
-    public Tank(int x, int y) {
+    public Tank(int x, int y,boolean goodTank) {
         this.x = x;
         this.y = y;
+        this.goodTank = goodTank;
     }
 
     public int getX() {
@@ -98,7 +116,11 @@ public class Tank {
 
     public void draw(Graphics g){
         Color c = g.getColor();
-        g.setColor(Color.RED);
+        if (this.goodTank){
+            g.setColor(Color.RED);
+        }else {
+            g.setColor(Color.BLUE);
+        }
         //内切原
         g.fillOval(x,y,30,30);
         g.setColor(c);
@@ -151,7 +173,13 @@ public class Tank {
         this.dir = Direction.STOP;
     }
 
+    public boolean isGoodTank() {
+        return goodTank;
+    }
+
     private void move(){
+       this.newDir();
+
         switch (dir){
             case L:
                 moveLeft();
@@ -191,7 +219,21 @@ public class Tank {
         }
     }
 
+    private void newDir() {
+        if (this.goodTank){
+            return;
+        }
+        step++;
+        if (step % frequency == 0){
+            Direction[] values = Direction.values();
+            int i = random.nextInt(values.length);
+            this.dir = values[i];
+        }
+        if (step % 3 == 0){
 
+            //this.shooting();
+        }
+    }
 
 
     public void moveByKey(KeyEvent keyEvent){
@@ -219,10 +261,9 @@ public class Tank {
             bDown = true;
         }
 
-        if (keyCode == KeyEvent.VK_X ){
+        if (keyCode == KeyEvent.VK_X && isLive()){
             //发射子弹
-            Missile missile = shooting();
-            tankClient.missiles.add(missile);
+            shooting();
             return;
         }
 
@@ -231,8 +272,15 @@ public class Tank {
 
     }
 
+    public int getLevel() {
+        return level;
+    }
 
-    Missile shooting(){
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    void shooting(){
         if (lastDir == null ){
             lastDir = Direction.U;
         }
@@ -240,9 +288,10 @@ public class Tank {
         if (lastDir == Direction.STOP){
             lastDir = dir;
         }
-
-        Missile missile = new Missile(getTankCenterX(), getTankCenterY(), toDir,this.tankClient);
-        return missile;
+        for (int i = 0; i < level; i++) {
+            Missile missile = new Missile(getTankCenterX()+i*10, getTankCenterY()+i*10, toDir,this.tankClient,this.goodTank);
+            tankClient.missiles.add(missile);
+        }
     }
 
     //向左移动
@@ -393,6 +442,8 @@ public class Tank {
         return y + TankClient.TANK_HEIGHT;
     }
 
-
+   public Rectangle getRectangle(){
+        return new Rectangle(x,y,TankClient.TANK_WIDTH,TankClient.TANK_HEIGHT);
+   }
 
 }
